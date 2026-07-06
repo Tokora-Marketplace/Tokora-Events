@@ -1,0 +1,939 @@
+{
+  "address": "rCLbtzqQ3LW8rr69TMZuCqNacvE5ZK3DxdjBC2T8SYi",
+  "metadata": {
+    "name": "tokora",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "close_event",
+      "discriminator": [
+        117,
+        114,
+        193,
+        54,
+        49,
+        25,
+        75,
+        194
+      ],
+      "accounts": [
+        {
+          "name": "event_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "organizer"
+              },
+              {
+                "kind": "account",
+                "path": "event_account.event_id",
+                "account": "EventAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "optional": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "event_account"
+              }
+            ]
+          }
+        },
+        {
+          "name": "organizer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_event",
+      "discriminator": [
+        49,
+        219,
+        29,
+        203,
+        22,
+        98,
+        100,
+        87
+      ],
+      "accounts": [
+        {
+          "name": "event_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "organizer"
+              },
+              {
+                "kind": "arg",
+                "path": "args.event_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "organizer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "CreateEventArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "fund_vault",
+      "discriminator": [
+        26,
+        33,
+        207,
+        242,
+        119,
+        108,
+        134,
+        73
+      ],
+      "accounts": [
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "event_account"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  118,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "organizer"
+              },
+              {
+                "kind": "account",
+                "path": "event_account.event_id",
+                "account": "EventAccount"
+              }
+            ]
+          }
+        },
+        {
+          "name": "organizer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "FundVaultArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "register_attendee",
+      "discriminator": [
+        19,
+        219,
+        82,
+        164,
+        90,
+        233,
+        134,
+        140
+      ],
+      "accounts": [
+        {
+          "name": "attendee_record",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  116,
+                  116,
+                  101,
+                  110,
+                  100,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "attendee"
+              },
+              {
+                "kind": "account",
+                "path": "event_account"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event_account",
+          "writable": true
+        },
+        {
+          "name": "organizer_treasury",
+          "writable": true
+        },
+        {
+          "name": "attendee",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "RegisterAttendeeArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "verify_attendance",
+      "discriminator": [
+        210,
+        147,
+        173,
+        144,
+        13,
+        150,
+        214,
+        2
+      ],
+      "accounts": [
+        {
+          "name": "attendance_record",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  116,
+                  116,
+                  101,
+                  110,
+                  100,
+                  97,
+                  110,
+                  99,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "attendee_record.attendee",
+                "account": "AttendeeRecord"
+              },
+              {
+                "kind": "account",
+                "path": "event_account"
+              }
+            ]
+          }
+        },
+        {
+          "name": "event_account",
+          "writable": true
+        },
+        {
+          "name": "attendee_record",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  97,
+                  116,
+                  116,
+                  101,
+                  110,
+                  100,
+                  101,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "attendee_record.attendee",
+                "account": "AttendeeRecord"
+              },
+              {
+                "kind": "account",
+                "path": "event_account"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "optional": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "event_account"
+              }
+            ]
+          }
+        },
+        {
+          "name": "asset",
+          "writable": true
+        },
+        {
+          "name": "collection",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "mpl_core_program",
+          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+        },
+        {
+          "name": "handler",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "instruction_sysvar",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "VerifyAttendanceArgs"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "AttendanceRecord",
+      "discriminator": [
+        207,
+        57,
+        71,
+        145,
+        143,
+        128,
+        238,
+        179
+      ]
+    },
+    {
+      "name": "AttendeeRecord",
+      "discriminator": [
+        117,
+        227,
+        32,
+        251,
+        112,
+        133,
+        145,
+        142
+      ]
+    },
+    {
+      "name": "EventAccount",
+      "discriminator": [
+        98,
+        136,
+        32,
+        165,
+        133,
+        231,
+        243,
+        154
+      ]
+    },
+    {
+      "name": "OrganizerVault",
+      "discriminator": [
+        19,
+        125,
+        200,
+        255,
+        73,
+        131,
+        122,
+        189
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "EventNotActive",
+      "msg": "Event is not active"
+    },
+    {
+      "code": 6001,
+      "name": "CapacityReached",
+      "msg": "Event has reached maximum capacity"
+    },
+    {
+      "code": 6002,
+      "name": "AlreadyRegistered",
+      "msg": "Attendee is already registered for this event"
+    },
+    {
+      "code": 6003,
+      "name": "AlreadyAttended",
+      "msg": "Attendance has already been recorded for this attendee"
+    },
+    {
+      "code": 6004,
+      "name": "UnauthorizedHandler",
+      "msg": "Caller is not the authorized handler for this event"
+    },
+    {
+      "code": 6005,
+      "name": "InsufficientVaultBalance",
+      "msg": "Organizer vault has insufficient balance for mint cost"
+    },
+    {
+      "code": 6006,
+      "name": "InvalidQRSignature",
+      "msg": "QR signature verification failed"
+    },
+    {
+      "code": 6007,
+      "name": "MintingNotEnabled",
+      "msg": "NFT minting is not enabled for this event"
+    },
+    {
+      "code": 6008,
+      "name": "NameTooLong",
+      "msg": "Event name exceeds maximum length"
+    },
+    {
+      "code": 6009,
+      "name": "UriTooLong",
+      "msg": "Metadata URI exceeds maximum length"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidTicketPrice",
+      "msg": "Ticket price must be greater than zero for paid events"
+    },
+    {
+      "code": 6011,
+      "name": "UnauthorizedOrganizer",
+      "msg": "Caller is not the organizer of this event"
+    },
+    {
+      "code": 6012,
+      "name": "EventAlreadyEnded",
+      "msg": "Event has already ended"
+    },
+    {
+      "code": 6013,
+      "name": "VaultAlreadyFunded",
+      "msg": "Vault has already been funded"
+    }
+  ],
+  "types": [
+    {
+      "name": "AttendanceRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "attendee",
+            "type": "pubkey"
+          },
+          {
+            "name": "event",
+            "type": "pubkey"
+          },
+          {
+            "name": "organizer",
+            "type": "pubkey"
+          },
+          {
+            "name": "verified",
+            "type": "bool"
+          },
+          {
+            "name": "verified_at",
+            "type": "i64"
+          },
+          {
+            "name": "ticket_type",
+            "type": "u8"
+          },
+          {
+            "name": "nft_minted",
+            "type": "bool"
+          },
+          {
+            "name": "nft_mint",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "reputation_points",
+            "type": "u32"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "AttendeeRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "attendee",
+            "type": "pubkey"
+          },
+          {
+            "name": "event",
+            "type": "pubkey"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "RegistrationStatus"
+              }
+            }
+          },
+          {
+            "name": "ticket_type",
+            "type": "u8"
+          },
+          {
+            "name": "amount_paid",
+            "type": "u64"
+          },
+          {
+            "name": "registered_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateEventArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "event_id",
+            "type": "u64"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "metadata_uri",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "ticket_price",
+            "type": "u64"
+          },
+          {
+            "name": "total_supply",
+            "type": "u32"
+          },
+          {
+            "name": "event_date",
+            "type": "i64"
+          },
+          {
+            "name": "mode",
+            "type": {
+              "defined": {
+                "name": "EventMode"
+              }
+            }
+          },
+          {
+            "name": "handler",
+            "type": "pubkey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EventAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "organizer",
+            "type": "pubkey"
+          },
+          {
+            "name": "handler",
+            "type": "pubkey"
+          },
+          {
+            "name": "event_id",
+            "type": "u64"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "metadata_uri",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "ticket_price",
+            "type": "u64"
+          },
+          {
+            "name": "total_supply",
+            "type": "u32"
+          },
+          {
+            "name": "tickets_sold",
+            "type": "u32"
+          },
+          {
+            "name": "tickets_verified",
+            "type": "u32"
+          },
+          {
+            "name": "mode",
+            "type": {
+              "defined": {
+                "name": "EventMode"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": {
+                "name": "EventStatus"
+              }
+            }
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "event_date",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EventMode",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Web2"
+          },
+          {
+            "name": "Web3"
+          }
+        ]
+      }
+    },
+    {
+      "name": "EventStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Ended"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    },
+    {
+      "name": "FundVaultArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "cost_per_mint",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "OrganizerVault",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "organizer",
+            "type": "pubkey"
+          },
+          {
+            "name": "event",
+            "type": "pubkey"
+          },
+          {
+            "name": "total_deposited",
+            "type": "u64"
+          },
+          {
+            "name": "total_spent",
+            "type": "u64"
+          },
+          {
+            "name": "mints_executed",
+            "type": "u32"
+          },
+          {
+            "name": "cost_per_mint",
+            "type": "u64"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "funded_at",
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RegisterAttendeeArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "ticket_type",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RegistrationStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Pending"
+          },
+          {
+            "name": "Approved"
+          },
+          {
+            "name": "Rejected"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VerifyAttendanceArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "qr_message",
+            "type": "bytes"
+          },
+          {
+            "name": "qr_signature",
+            "type": {
+              "array": [
+                "u8",
+                64
+              ]
+            }
+          },
+          {
+            "name": "handler_pubkey",
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "asset_name",
+            "type": "string"
+          },
+          {
+            "name": "asset_uri",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ]
+}

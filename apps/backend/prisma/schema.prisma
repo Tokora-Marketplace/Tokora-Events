@@ -1,0 +1,249 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String?
+  avatar        String?
+  walletAddress String?  @unique @map("wallet_address")
+  walletType    String?  @map("wallet_type")
+  role          Role     @default(ATTENDEE)
+  isVerified    Boolean  @default(false) @map("is_verified")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  organizedEvents    Event[]
+  attendeeRecords    AttendeeRecord[]
+  attendanceRecords  AttendanceRecord[]
+  ratingsGiven       Rating[]           @relation("RatingsGiven")
+  ratingsReceived    Rating[]           @relation("RatingsReceived")
+  reputation         Reputation?
+  transactions       Transaction[]
+  tips               Tip[]              @relation("TipsSent")
+  tipsReceived       Tip[]              @relation("TipsReceived")
+
+  @@map("users")
+}
+
+enum Role {
+  ATTENDEE
+  ORGANIZER
+  ADMIN
+}
+
+model Event {
+  id              String      @id @default(uuid())
+  eventId         BigInt      @unique @map("event_id")
+  organizerId     String      @map("organizer_id")
+  name            String
+  description     String?
+  metadataUri     String?     @map("metadata_uri")
+  symbol          String
+  ticketPrice     BigInt      @map("ticket_price")
+  totalSupply     Int         @map("total_supply")
+  ticketsSold     Int         @default(0) @map("tickets_sold")
+  ticketsVerified Int         @default(0) @map("tickets_verified")
+  mode            EventMode   @default(WEB2)
+  status          EventStatus @default(ACTIVE)
+  eventDate       DateTime    @map("event_date")
+  location        String?
+  bannerImage     String?     @map("banner_image")
+  handlerAddress  String?     @map("handler_address")
+  eventAccountPda String?     @map("event_account_pda")
+  vaultPda        String?     @map("vault_pda")
+  costPerMint     BigInt?     @map("cost_per_mint")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  organizer         User             @relation(fields: [organizerId], references: [id])
+  attendeeRecords   AttendeeRecord[]
+  attendanceRecords AttendanceRecord[]
+  transactions      Transaction[]
+  ratings           Rating[]
+  tips              Tip[]
+  metadataUploads   MetadataUpload[]
+
+  @@map("events")
+}
+
+enum EventMode {
+  WEB2
+  WEB3
+}
+
+enum EventStatus {
+  ACTIVE
+  ENDED
+  CANCELLED
+}
+
+model AttendeeRecord {
+  id                String         @id @default(uuid())
+  userId            String         @map("user_id")
+  eventId           String         @map("event_id")
+  ticketType        TicketType     @default(GENERAL) @map("ticket_type")
+  amountPaid        BigInt         @map("amount_paid")
+  status            AttendeeStatus @default(PENDING)
+  attendeeRecordPda String?        @map("attendee_record_pda")
+  idempotencyKey    String         @unique @map("idempotency_key")
+  registeredAt      DateTime       @default(now()) @map("registered_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  user             User              @relation(fields: [userId], references: [id])
+  event            Event             @relation(fields: [eventId], references: [id])
+  attendanceRecord AttendanceRecord?
+
+  @@unique([userId, eventId])
+  @@map("attendee_records")
+}
+
+model AttendanceRecord {
+  id                  String    @id @default(uuid())
+  userId              String    @map("user_id")
+  eventId             String    @map("event_id")
+  attendeeRecordId    String    @unique @map("attendee_record_id")
+  verified            Boolean   @default(false)
+  verifiedAt          DateTime? @map("verified_at")
+  nftMinted           Boolean   @default(false) @map("nft_minted")
+  nftMintAddress      String?   @map("nft_mint_address")
+  reputationPoints    Int       @default(0) @map("reputation_points")
+  attendanceRecordPda String?   @map("attendance_record_pda")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  user           User           @relation(fields: [userId], references: [id])
+  event          Event          @relation(fields: [eventId], references: [id])
+  attendeeRecord AttendeeRecord @relation(fields: [attendeeRecordId], references: [id])
+
+  @@unique([userId, eventId])
+  @@map("attendance_records")
+}
+
+enum TicketType {
+  GENERAL
+  VIP
+  SPEAKER
+}
+
+enum AttendeeStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Transaction {
+  id             String            @id @default(uuid())
+  userId         String            @map("user_id")
+  eventId        String?           @map("event_id")
+  type           TransactionType
+  status         TransactionStatus @default(INITIATED)
+  amountLamports BigInt            @map("amount_lamports")
+  amountFiat     Decimal?          @map("amount_fiat") @db.Decimal(18, 2)
+  currency       String?
+  txSignature    String?           @unique @map("tx_signature")
+  externalRef    String?           @map("external_ref")
+  idempotencyKey String            @unique @map("idempotency_key")
+  metadata       Json?
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+
+  user  User   @relation(fields: [userId], references: [id])
+  event Event? @relation(fields: [eventId], references: [id])
+
+  @@map("transactions")
+}
+
+enum TransactionType {
+  TICKET_PURCHASE
+  VAULT_FUNDING
+  TIP
+  GIVEAWAY_REWARD
+  REFUND
+}
+
+enum TransactionStatus {
+  INITIATED
+  PENDING
+  CONFIRMED
+  FAILED
+  REFUNDED
+}
+
+model Reputation {
+  id              String   @id @default(uuid())
+  userId          String   @unique @map("user_id")
+  totalPoints     Int      @default(0) @map("total_points")
+  eventsAttended  Int      @default(0) @map("events_attended")
+  eventsOrganized Int      @default(0) @map("events_organized")
+  avgRating       Decimal  @default(0) @map("avg_rating") @db.Decimal(3, 2)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("reputations")
+}
+
+model Rating {
+  id        String     @id @default(uuid())
+  raterId   String     @map("rater_id")
+  ratedId   String     @map("rated_id")
+  eventId   String     @map("event_id")
+  score     Int
+  comment   String?
+  type      RatingType
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  rater User  @relation("RatingsGiven", fields: [raterId], references: [id])
+  rated User  @relation("RatingsReceived", fields: [ratedId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@unique([raterId, ratedId, eventId])
+  @@map("ratings")
+}
+
+enum RatingType {
+  ATTENDEE_TO_ORGANIZER
+  ORGANIZER_TO_ATTENDEE
+}
+
+model Tip {
+  id             String   @id @default(uuid())
+  senderId       String   @map("sender_id")
+  recipientId    String   @map("recipient_id")
+  eventId        String   @map("event_id")
+  amountLamports BigInt   @map("amount_lamports")
+  txSignature    String?  @unique @map("tx_signature")
+  message        String?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  sender    User  @relation("TipsSent", fields: [senderId], references: [id])
+  recipient User  @relation("TipsReceived", fields: [recipientId], references: [id])
+  event     Event @relation(fields: [eventId], references: [id])
+
+  @@map("tips")
+}
+
+model MetadataUpload {
+  id        String       @id @default(uuid())
+  eventId   String       @map("event_id")
+  type      MetadataType
+  uri       String
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  event Event @relation(fields: [eventId], references: [id])
+
+  @@map("metadata_uploads")
+}
+
+enum MetadataType {
+  EVENT
+  NFT
+}
