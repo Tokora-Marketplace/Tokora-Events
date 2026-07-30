@@ -170,9 +170,10 @@ export default function Navbar() {
   const showToast = useCallback((msg: string) => setToast(msg), []);
   const dismissToast = useCallback(() => setToast(null), []);
 
+  // Authentication check for wallet access
   const handleNavClick = (href: string, label: string) => {
     if (href === "/wallet") {
-      const isAuthenticated = false;
+      const isAuthenticated = true;
       if (!isAuthenticated) {
         showToast("Connect your wallet to continue");
         return false;

@@ -7,7 +7,7 @@ import TicketSheet from "../../../components/TicketSheet";
 import PaymentSheet from "../../../components/PaymentSheet";
 import Image from "next/image";
 
-// ─── Mock data layer (replace with real API) ──────────────────────────────────
+// ─── Mock data layer (replace with real API)
 // In production this whole block disappears — only useEventDetail()'s fetch
 // call matters. Kept here so the page works standalone during development.
 
@@ -264,7 +264,7 @@ const MOCK_DETAILS: Record<string, EventDetail> = {
   },
 };
 
-// ─── API hook (wire your real endpoint here) ───────────────────────────────────
+// ─── API hook (wire your real endpoint here)
 
 function useEventDetail(id: string) {
   const [event, setEvent] = useState<EventDetail | null>(null);
@@ -276,7 +276,7 @@ function useEventDetail(id: string) {
     setLoading(true);
     setError(null);
 
-    // ── Swap this block for your real API call ────────────────────────────────
+    // ── Swap this block for real API call
     // const controller = new AbortController();
     // const timeout = setTimeout(() => controller.abort(), 10000);
     // fetch(`/api/events/${id}`, { signal: controller.signal })
@@ -289,12 +289,94 @@ function useEventDetail(id: string) {
     //   .catch(e => { if (!cancelled) setError(e.name === "AbortError" ? "Request timed out." : e.message === "NOT_FOUND" ? "NOT_FOUND" : "Failed to load event. Please try again."); })
     //   .finally(() => { clearTimeout(timeout); if (!cancelled) setLoading(false); });
     // return () => { cancelled = true; controller.abort(); };
-    // ──────────────────────────────────────────────────────────────────────────
+    //
 
     const timer = setTimeout(() => {
       if (cancelled) return;
       try {
-        const data = MOCK_DETAILS[id];
+        // Check the hardcoded mock store first
+        let data: EventDetail | undefined = MOCK_DETAILS[id];
+
+        // Fallback: check sessionStorage for events just created via the
+        // Create page. This simulates what your real API would do — persist
+        // the event on POST, then return it here on GET.
+        // DELETE this block once your real API is wired up.
+        if (!data && typeof window !== "undefined") {
+          const raw = sessionStorage.getItem(`mock_event_${id}`);
+          if (raw) {
+            try {
+              const parsed = JSON.parse(raw);
+              data = {
+                id: parsed.id,
+                title: parsed.title,
+                description: parsed.description || "No description provided.",
+                imageUrl: parsed.imageUrl,
+                date: parsed.date,
+                time: parsed.time,
+                venue: parsed.venue || "TBC",
+                organizer: { id: "me", name: "You", color: "#FF6B2C" },
+                organizerRole: "Event Organizer",
+                isFollowingOrganizer: false,
+                categories: ["Web3"],
+                tags: [],
+                rating: 0,
+                ratingBasis: "No ratings yet",
+                going: 0,
+                attendingCount: 0,
+                attendeePreview: [],
+                isTrending: false,
+                ticketTiers: (parsed.tiers ?? [])
+                  .map(
+                    (t: {
+                      id: string;
+                      name: string;
+                      perks: string;
+                      priceLabel: string;
+                      priceValue: number;
+                      currency: "SOL" | "ETH" | "NGN" | "FREE";
+                      spots: string;
+                    }) => ({
+                      id: t.id,
+                      name: t.name || "General",
+                      perks: t.perks || "",
+                      priceLabel:
+                        parsed.ticketType === "free"
+                          ? "Free"
+                          : t.priceLabel || "Free",
+                      priceValue:
+                        parsed.ticketType === "free" ? 0 : t.priceValue || 0,
+                      currency:
+                        parsed.ticketType === "free"
+                          ? "NGN"
+                          : t.currency || "NGN",
+                      spotsLeft: t.spots ? parseInt(t.spots) : undefined,
+                      isMostPopular: false,
+                    }),
+                  )
+                  .concat(
+                    // Ensure at least one tier exists for free events
+                    parsed.ticketType === "free" &&
+                      (!parsed.tiers || parsed.tiers.length === 0)
+                      ? [
+                          {
+                            id: "free_default",
+                            name: "Free Entry",
+                            perks: "General admission",
+                            priceLabel: "Free",
+                            priceValue: 0,
+                            currency: "NGN",
+                            isMostPopular: true,
+                          },
+                        ]
+                      : [],
+                  ),
+              } as EventDetail;
+            } catch {
+              data = undefined;
+            }
+          }
+        }
+
         if (!data) setError("NOT_FOUND");
         else setEvent(data);
       } catch {
@@ -375,7 +457,7 @@ function AttendeeAvatar({
   );
 }
 
-// ─── Skeleton (lazy-load placeholder matching final layout) ───────────────────
+// ─── Skeleton (lazy-load placeholder matching final layout)
 
 function DetailSkeleton({ onBack }: { onBack: () => void }) {
   return (
@@ -640,8 +722,6 @@ export default function EventDetailPage() {
             src={event.imageUrl}
             alt={event.title}
             className="w-full h-full object-cover"
-            width={100}
-            height={100}
           />
         ) : (
           <ImagePlaceholder />
@@ -706,8 +786,6 @@ export default function EventDetailPage() {
               <Image
                 src={event.organizer.avatarUrl}
                 alt={event.organizer.name}
-                width={40}
-                height={40}
                 className="w-10 h-10 rounded-full object-cover shrink-0"
               />
             ) : (
@@ -817,7 +895,7 @@ export default function EventDetailPage() {
           className="mb-4 animate-slideUpFade"
           style={{ animationDelay: "320ms" }}
         >
-          <h2 className="text-[15px] font-bold mb-3">Who&apoos;s Going</h2>
+          <h2 className="text-[15px] font-bold mb-3">Who&apos;s Going</h2>
           <div className="flex items-center gap-3">
             <div className="flex">
               {event.attendeePreview.slice(0, 4).map((a, i) => (

@@ -110,7 +110,7 @@ function useDiscoverEvents(activeFilters: FilterType[], query: string) {
     setLoading(true);
     setError(null);
 
-    // ── Swap this block for your real API call ────────────────────────────────
+    // ── Swap this block for the real API call ────────────────────────────────
     // const controller = new AbortController();
     // const timeout = setTimeout(() => controller.abort(), 10000);
     // const params = new URLSearchParams();
@@ -376,7 +376,7 @@ export default function DiscoverPage() {
       className="
       relative w-full
       bg-[#0f0f0f] text-white
-      pb-20
+      pb-24
       font-[system-ui,-apple-system,'Helvetica_Neue',sans-serif]
       [-webkit-overflow-scrolling:touch]
     "

@@ -1,4 +1,3 @@
-// 📁 FILE LOCATION: app/tickets/[id]/page.tsx
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -6,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import type { MyTicket } from "../../../components/types";
 import Image from "next/image";
 
-// ─── Mock data layer (replace with real API) ──────────────────────────────────
+// ─── Mock data layer (replace with real API)
 // In production this disappears — useTicket()'s fetch call is what matters.
 //
 // This acts as a tiny in-memory "database" so that any ticket purchased via
@@ -97,7 +96,7 @@ function getOrCreateMockTicket(id: string): MyTicket | null {
   return generated;
 }
 
-// ─── API hooks (wire your real endpoints here) ─────────────────────────────────
+// ─── API hooks (wire real endpoints here)
 
 function useTicket(id: string) {
   const [ticket, setTicket] = useState<MyTicket | null>(null);
@@ -109,7 +108,7 @@ function useTicket(id: string) {
     setLoading(true);
     setError(null);
 
-    // ── Swap this block for your real API call ────────────────────────────────
+    // ── Swap this block for real API call
     // const controller = new AbortController();
     // const timeout = setTimeout(() => controller.abort(), 10000);
     // fetch(`/api/tickets/${id}`, { signal: controller.signal })
@@ -122,7 +121,7 @@ function useTicket(id: string) {
     //   .catch(e => { if (!cancelled) setError(e.name === "AbortError" ? "Request timed out." : e.message === "NOT_FOUND" ? "NOT_FOUND" : "Failed to load ticket. Please try again."); })
     //   .finally(() => { clearTimeout(timeout); if (!cancelled) setLoading(false); });
     // return () => { cancelled = true; controller.abort(); };
-    // ──────────────────────────────────────────────────────────────────────────
+    //
 
     const timer = setTimeout(() => {
       if (cancelled) return;
@@ -148,7 +147,7 @@ function useTicket(id: string) {
   return { ticket, loading, error, refetch: fetchTicket, setTicket };
 }
 
-// ─── Helpers ────────────────────────────────────────────────────────────────────
+// ─── Helpers
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -180,7 +179,7 @@ function ImagePlaceholder() {
   );
 }
 
-// ─── QR code placeholder ────────────────────────────────────────────────────────
+// ─── QR code placeholder
 // Swap the dot grid for a real QR generated server-side from ticket.qrPayload
 // (e.g. via `qrcode` package or a signed image URL from your API).
 
@@ -211,7 +210,7 @@ function QRPlaceholder({ onTap }: { onTap: () => void }) {
   );
 }
 
-// ─── Verified badge ─────────────────────────────────────────────────────────────
+// ─── Verified badge
 
 function VerifiedBadge({ verifiedAt }: { verifiedAt?: string }) {
   return (
@@ -236,7 +235,7 @@ function VerifiedBadge({ verifiedAt }: { verifiedAt?: string }) {
   );
 }
 
-// ─── Skeleton (lazy-load placeholder) ───────────────────────────────────────────
+// ─── Skeleton (lazy-load placeholder)
 
 function TicketSkeleton({ onClose }: { onClose: () => void }) {
   return (
@@ -356,7 +355,7 @@ function ErrorState({
   );
 }
 
-// ─── Main page ──────────────────────────────────────────────────────────────────
+// ─── Main page
 
 export default function TicketReceiptPage() {
   const router = useRouter();
@@ -379,7 +378,7 @@ export default function TicketReceiptPage() {
     setVerifying(true);
     setVerifyError(null);
     try {
-      // ── Replace with your real on-chain/venue verification call ─────────────
+      // ── Replace with your real on-chain/venue verification call
       // Typically this is actually triggered by a venue scanner hitting this
       // endpoint with the QR payload — this client-side tap is a demo/manual
       // fallback (e.g. "I'm at the venue, staff verified me, confirm here").

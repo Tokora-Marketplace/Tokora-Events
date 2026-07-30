@@ -1,10 +1,10 @@
-// 📁 FILE LOCATION: app/create/page.tsx
 "use client";
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
-// ─── Types ─────────────────────────────────────────────────────────────────────
+// ─── Types
 
 interface TicketTierDraft {
   id: string;
@@ -71,7 +71,7 @@ function StepIndicator({ current }: { current: number }) {
           {/* Circle: orange fill for current AND completed, dark for future */}
           <div
             className={`
-            w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold flex-shrink-0
+            w-9 h-9 rounded-full flex items-center justify-center text-[13px] font-bold shrink-0
             transition-all duration-300
             ${
               current >= step.number
@@ -86,7 +86,7 @@ function StepIndicator({ current }: { current: number }) {
           {i < STEPS.length - 1 && (
             <div
               className={`
-              flex-1 h-[2px] mx-2 rounded-full transition-all duration-500
+              flex-1 h-0.5 mx-2 rounded-full transition-all duration-500
               ${current > step.number ? "bg-[#FF6B2C]" : "bg-[#2a2a2a]"}
             `}
             />
@@ -114,7 +114,7 @@ function FieldError({ msg }: { msg?: string }) {
   ) : null;
 }
 
-// ─── Step 1: Event Info ────────────────────────────────────────────────────────
+// ─── Step 1: Event Info
 
 function Step1({
   form,
@@ -181,8 +181,8 @@ function Step1({
           className="w-full rounded-2xl border border-dashed border-[#3a3a3a] bg-[#1c1c1c] overflow-hidden active:scale-[0.99] transition-transform duration-150"
         >
           {form.bannerPreview ? (
-            <div className="relative w-full h-[150px]">
-              <img
+            <div className="relative w-full h-37.5">
+              <Image
                 src={form.bannerPreview}
                 alt="Banner preview"
                 className="w-full h-full object-cover"
@@ -268,7 +268,7 @@ function Step2({
           className={`
             w-full bg-[#1c1c1c] border rounded-2xl px-4 py-3.5 text-white text-[14px]
             outline-none transition-colors duration-200 focus:border-[#FF6B2C]/50
-            [color-scheme:dark]
+            [scheme:dark]
             ${errors.datetime ? "border-red-500/50" : "border-[#2a2a2a]"}
           `}
         />
@@ -464,7 +464,7 @@ function PaidTierCard({
             const c = e.target.value as TicketTierDraft["currency"];
             onChange({ ...tier, currency: c, priceValue: 0, priceLabel: "" });
           }}
-          className={`${mini} [color-scheme:dark]`}
+          className={`${mini} [scheme:dark]`}
         >
           {(["NGN", "SOL", "ETH"] as const).map((c) => (
             <option key={c} value={c} className="bg-[#131313]">
@@ -509,8 +509,8 @@ function Step4({ form }: { form: CreateEventForm }) {
   return (
     <div className="space-y-4">
       {form.bannerPreview && (
-        <div className="w-full h-[140px] rounded-2xl overflow-hidden">
-          <img
+        <div className="w-full h-35 rounded-2xl overflow-hidden">
+          <Image
             src={form.bannerPreview}
             alt="Banner"
             className="w-full h-full object-cover"
@@ -554,7 +554,7 @@ function Step4({ form }: { form: CreateEventForm }) {
               key={label}
               className="flex items-start justify-between gap-3 py-3"
             >
-              <span className="text-[#555] text-[10px] uppercase tracking-wide flex-shrink-0">
+              <span className="text-[#555] text-[10px] uppercase tracking-wide shrink-0">
                 {label}
               </span>
               <span
@@ -599,7 +599,7 @@ function Step4({ form }: { form: CreateEventForm }) {
                   </p>
                 )}
               </div>
-              <span className="text-[#FF6B2C] text-[13px] font-bold flex-shrink-0">
+              <span className="text-[#FF6B2C] text-[13px] font-bold shrink-0">
                 {tier.currency === "FREE" ? "Free" : tier.priceLabel || "—"}
               </span>
             </div>
@@ -608,8 +608,8 @@ function Step4({ form }: { form: CreateEventForm }) {
       )}
 
       <p className="text-[#444] text-[11px] text-center leading-relaxed px-2 pb-2">
-        By publishing, you confirm this event complies with Tokora Marketplace's
-        community guidelines.
+        By publishing, you confirm this event complies with Tokora
+        Marketplace`&apos;`s community guidelines.
       </p>
     </div>
   );
@@ -642,6 +642,7 @@ async function submitEvent(form: CreateEventForm): Promise<{ id: string }> {
   // body.append("venue", form.venue);
   // body.append("datetime", form.datetime);
   // body.append("capacity", form.capacity);
+  // body.append("ticketType", form.ticketType);
   // if (form.bannerFile) body.append("banner", form.bannerFile);
   // body.append("tiers", JSON.stringify(form.tiers));
   // const res = await fetch("/api/events", { method: "POST", body });
@@ -649,7 +650,33 @@ async function submitEvent(form: CreateEventForm): Promise<{ id: string }> {
   // return res.json();
   // ──────────────────────────────────────────────────────────────────────────
   await new Promise((r) => setTimeout(r, 1400));
-  return { id: `evt_${Math.random().toString(36).slice(2, 8)}` };
+  const id = `evt_${Math.random().toString(36).slice(2, 8)}`;
+
+  // Mock-only: stash the created event so the detail page can display it.
+  // Delete this block once your real API persists events server-side.
+  if (typeof window !== "undefined") {
+    sessionStorage.setItem(
+      `mock_event_${id}`,
+      JSON.stringify({
+        id,
+        title: form.title,
+        description: form.description,
+        imageUrl: form.bannerPreview ?? undefined,
+        date: form.datetime ? form.datetime.split("T")[0] : "",
+        time: form.datetime
+          ? new Date(form.datetime).toLocaleTimeString("en-US", {
+              hour: "numeric",
+              minute: "2-digit",
+            })
+          : "",
+        venue: form.venue,
+        ticketType: form.ticketType,
+        tiers: form.tiers,
+      }),
+    );
+  }
+
+  return { id };
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -710,7 +737,7 @@ export default function CreatePage() {
         bg-[#0f0f0f] text-white
         font-[system-ui,-apple-system,'Helvetica_Neue',sans-serif]
         [-webkit-overflow-scrolling:touch]
-        pb-[120px]
+        pb-30
       "
     >
       {/* ── Header — matches image: no back button, just the title ── */}

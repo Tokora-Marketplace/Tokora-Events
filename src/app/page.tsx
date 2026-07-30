@@ -1,4 +1,3 @@
-// 📁 FILE LOCATION: app/page.tsx
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -143,7 +142,7 @@ function useEvents(category: EventCategory, query: string) {
   return { events, loading, error };
 }
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
+// ─── Skeleton
 
 function SkeletonCard({ tall = false }: { tall?: boolean }) {
   return (
@@ -151,10 +150,10 @@ function SkeletonCard({ tall = false }: { tall?: boolean }) {
       className={`
         animate-pulse rounded-2xl overflow-hidden
         bg-[#1e1e1e] border border-white/5
-        ${tall ? "w-full" : "flex-shrink-0 w-[200px]"}
+        ${tall ? "w-full" : "shrink-0 w-50"}
       `}
     >
-      <div className={`bg-[#2a2a2a] ${tall ? "h-[150px]" : "h-[110px]"}`} />
+      <div className={`bg-[#2a2a2a] ${tall ? "h-37.5" : "h-27.5"}`} />
       <div className="p-3 space-y-2">
         <div className="h-3 bg-[#2a2a2a] rounded-full w-3/4" />
         <div className="h-2.5 bg-[#2a2a2a] rounded-full w-1/2" />
@@ -164,7 +163,7 @@ function SkeletonCard({ tall = false }: { tall?: boolean }) {
   );
 }
 
-// ─── Error state ──────────────────────────────────────────────────────────────
+// ─── Error state
 
 function ErrorState({
   message,
@@ -190,9 +189,7 @@ function ErrorState({
           <line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
       </div>
-      <p className="text-[#6b6b6b] text-sm text-center max-w-[220px]">
-        {message}
-      </p>
+      <p className="text-[#6b6b6b] text-sm text-center max-w-55">{message}</p>
       <button
         onClick={onRetry}
         className="px-5 py-2 rounded-full bg-[#FF6B2C] text-white text-sm font-semibold
@@ -204,7 +201,7 @@ function ErrorState({
   );
 }
 
-// ─── Empty state ──────────────────────────────────────────────────────────────
+// ─── Empty state
 
 function EmptyState() {
   return (
@@ -275,7 +272,7 @@ export default function Home() {
       className="
       relative w-full
       bg-[#0f0f0f] text-white
-      pb-[100px]
+      pb-25
       font-[system-ui,-apple-system,'Helvetica_Neue',sans-serif]
       [-webkit-overflow-scrolling:touch]
     "
@@ -374,7 +371,7 @@ export default function Home() {
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="flex-shrink-0 text-[#6b6b6b] active:scale-90 transition-transform"
+              className="shrink-0 text-[#6b6b6b] active:scale-90 transition-transform"
             >
               <svg
                 width="14"
@@ -426,7 +423,7 @@ export default function Home() {
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={`
-                flex-shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold
+                shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold
                 transition-all duration-200 active:scale-95
                 ${
                   activeCategory === cat
